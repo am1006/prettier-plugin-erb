@@ -1,0 +1,23 @@
+import { expect, test } from "vitest";
+import { readdirSync, readFileSync } from "fs";
+import { join } from "path";
+import { format } from "prettier";
+import * as erbPlugin from "../src/index";
+
+const prettify = (code, options = {}) =>
+  format(code, {
+    parser: "erb-template",
+    plugins: [erbPlugin],
+    ...options,
+  });
+
+const testFolder = join(__dirname, "cases");
+const tests = readdirSync(testFolder);
+
+test.each(tests)("%s", async (path) => {
+  const pathTest = join(testFolder, path);
+  const input = readFileSync(join(pathTest, "input.html"), "utf-8").trimEnd();
+  const expected = readFileSync(join(pathTest, "expected.html"), "utf-8").trimEnd();
+
+  expect(await prettify(input)).toEqual(expected);
+});

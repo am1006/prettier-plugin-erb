@@ -1,0 +1,19 @@
+{
+  "name": "prettier-plugin-html-erb",
+  "version": "0.0.1",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "prettier": "^3.3.3",
+    "regex": "^4.3.3"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.4"
+  }
+}
