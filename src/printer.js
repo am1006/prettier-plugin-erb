@@ -13,6 +13,10 @@ export function print(path, options, print) {
     return builders.group(builders.join(" ", ["<%=", node.content, "%>"]));
   }
 
+  if (node.type === "statement") {
+    return builders.group(builders.join(" ", ["<%", node.content, "%>"]));
+  }
+
   return "meh";
 }
 

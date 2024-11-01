@@ -8,12 +8,19 @@ const PLACEHOLDER = {
 const re = regex`
   (?<node>
     # Expression
-    <%= (?<expression> (?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?) %>
+    <%= (?<expression>\s*(?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?)\s*%>
+    |
+    # Statement
+    <% (?<statement>\s*(?<keyword>\g<KEYWORD>?) (?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?)\s* %>
+
+
   )
 
   (?(DEFINE)
+    (?<EVERYTHING>		\g<ALLSYMBOLS>*?)
     (?<ALLSYMBOLS>    [\s\S])
     (?<ESCAPEQUOTES>	'[^']*'|"[^"]*")
+    (?<KEYWORD>       if|else|elsif|unless|end)
   )
 `;
 
@@ -53,6 +60,7 @@ export const parse = (text) => {
   while ((match = root.content.slice(i).match(re)) !== null) {
     const matchText = match.groups.node;
     const expression = match.groups.expression;
+    const statement = match.groups.statement;
 
     const placeholder = generatePlaceholder();
 
@@ -63,20 +71,37 @@ export const parse = (text) => {
       length: match.length,
     };
 
-    root.content = replaceAt(
-      root.content,
-      placeholder,
-      match.index + i,
-      match[0].length,
-    );
+    if (expression != null) {
+      root.content = replaceAt(
+        root.content,
+        placeholder,
+        match.index + i,
+        match[0].length,
+      );
 
-    root.nodes[node.id] = {
-      ...node,
-      type: "expression",
-      content: expression.trim(),
-    };
+      root.nodes[node.id] = {
+        ...node,
+        type: "expression",
+        content: expression.trim(),
+      };
 
-    i += match.index + placeholder.length;
+      i += match.index + placeholder.length;
+    }
+
+    if (statement != null) {
+      const keyword = match.groups.keyword;
+
+      root.nodes[node.id] = {
+        ...node,
+        type: "statement",
+        content: statement.trim(),
+        keyword,
+      };
+
+      root.content = root.content.replace(node.originalText, node.id);
+
+      i += match.index + placeholder.length;
+    }
   }
 
   return root;

@@ -12,7 +12,10 @@ const prettify = (code, options = {}) =>
   });
 
 const testFolder = join(__dirname, "cases");
-const tests = readdirSync(testFolder);
+let tests = readdirSync(testFolder);
+if (tests.some((path) => path.startsWith("#"))) {
+  tests = tests.filter((item) => item.startsWith("#"));
+}
 
 test.each(tests)("%s", async (path) => {
   if (path.startsWith("_")) {
