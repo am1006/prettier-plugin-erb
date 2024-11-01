@@ -26,11 +26,23 @@ export function print(path, options, print) {
   }
 
   if (node.type === "statement") {
-    return builders.group(builders.join(" ", ["<%", node.content, "%>"]));
+    return printStatement(node);
   }
 
   return [];
 }
+
+const printStatement = (node) => {
+  const statement = builders.group(
+    builders.join(" ", ["<%", node.content, "%>"]),
+  );
+
+  if (["else"].includes(node.keyword)) {
+    return [builders.dedent(builders.hardline), statement, builders.hardline];
+  }
+
+  return statement;
+};
 
 export function embed() {
   return async (textToDoc, print, path, options) => {
@@ -41,7 +53,6 @@ export function embed() {
 
     const mapped = await Promise.all(
       splitAtElse(node).map(async (content) => {
-        // console.log(node);
         let doc;
         if (content in node.nodes) {
           doc = content;
@@ -100,7 +111,19 @@ export function embed() {
 }
 
 const splitAtElse = (node) => {
-  return [node.content];
+  const elseNodes = Object.values(node.nodes).filter(
+    (n) =>
+      n.type === "statement" &&
+      ["else"].includes(n.keyword) &&
+      node.content.search(n.id) !== -1,
+  );
+
+  if (elseNodes.length === 0) {
+    return [node.content];
+  }
+
+  const re = new RegExp(`(${elseNodes.map((e) => e.id).join(")|()")})`);
+  return node.content.split(re).filter(Boolean);
 };
 
 export const findPlaceholders = (text) => {

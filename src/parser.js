@@ -105,7 +105,7 @@ export const parse = (text) => {
           }
 
           // If the statement is not matching, replace the content with the placeholder
-          if (start.keyword !== "if") {
+          if (!["if"].includes(start.keyword)) {
             root.content = replaceAt(
               root.content,
               start.id,
