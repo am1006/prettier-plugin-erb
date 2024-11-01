@@ -8,11 +8,12 @@ const PLACEHOLDER = {
 const re = regex`
   (?<node>
     # Expression
-    <%= (?<expression> (?>\g<ALLSYMBOLS>)*?) %>
+    <%= (?<expression> (?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?) %>
   )
 
   (?(DEFINE)
     (?<ALLSYMBOLS>    [\s\S])
+    (?<ESCAPEQUOTES>	'[^']*'|"[^"]*")
   )
 `;
 

@@ -4,7 +4,7 @@ const { utils, builders } = doc;
 process.env.PRETTIER_DEBUG = "true";
 
 export function print(path, options, print) {
-  const node = path.getNode();
+  const node = path.node;
   if (!node) {
     return [];
   }
@@ -43,7 +43,11 @@ export function embed(path, options) {
 
         const p = currentDoc.slice(start, end);
 
-        res.push(path.call(print, "nodes", p));
+        if (node.nodes[p] != null) {
+          res.push(path.call(print, "nodes", p));
+        } else {
+          res.push(p);
+        }
         lastEnd = end;
       }
 
