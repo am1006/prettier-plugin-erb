@@ -1,5 +1,5 @@
 import { parse } from "./parser";
-import { print, embed } from "./printer";
+import { print, embed, getVisitorKeys } from "./printer";
 
 const PLUGIN_KEY = "erb-template";
 
@@ -23,6 +23,7 @@ export const parsers = {
 export const printers = {
   [PLUGIN_KEY]: {
     print,
-    embed
+    embed,
+    getVisitorKeys,
   }
 }

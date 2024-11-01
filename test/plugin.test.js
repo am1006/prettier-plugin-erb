@@ -23,11 +23,9 @@ test.each(tests)("%s", async (path) => {
   }
 
   const pathTest = join(testFolder, path);
-  const input = readFileSync(join(pathTest, "input.html"), "utf-8").trimEnd();
+  const input = readFileSync(join(pathTest, "input.html")).toString();
   const expected = readFileSync(
-    join(pathTest, "expected.html"),
-    "utf-8",
-  ).trimEnd();
+    join(pathTest, "expected.html")).toString();
 
   expect(await prettify(input)).toEqual(expected);
 });

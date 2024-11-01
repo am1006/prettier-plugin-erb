@@ -3,6 +3,18 @@ const { utils, builders } = doc;
 
 process.env.PRETTIER_DEBUG = "true";
 
+export const getVisitorKeys = (ast) => {
+  if ("type" in ast) {
+    return ast.type === "root" ? ["nodes"] : [];
+  }
+
+  return Object.values(ast)
+    .filter((node) => {
+      return node.type === "block";
+    })
+    .map((e) => e.id);
+};
+
 export function print(path, options, print) {
   const node = path.node;
   if (!node) {
@@ -17,52 +29,79 @@ export function print(path, options, print) {
     return builders.group(builders.join(" ", ["<%", node.content, "%>"]));
   }
 
-  return "meh";
+  return [];
 }
 
-export function embed(path, options) {
-  const node = path.node;
-  if (!node || node.type !== "root") {
-    return undefined;
-  }
+export function embed() {
+  return async (textToDoc, print, path, options) => {
+    const node = path.node;
+    if (!node || !["root", "block"].includes(node.type)) {
+      return undefined;
+    }
 
-  return async (textToDoc) => {
-    const doc = await textToDoc(node.content, { ...options, parser: "html" });
-
-    return utils.mapDoc(doc, (currentDoc) => {
-      if (typeof currentDoc !== "string") {
-        return currentDoc;
-      }
-
-      const idxs = findPlaceholders(currentDoc);
-      if (idxs.length === 0) {
-        return currentDoc;
-      }
-      let res = [];
-      let lastEnd = 0;
-      for (const { id, start, end } of idxs) {
-        if (lastEnd < start) {
-          res.push(currentDoc.slice(lastEnd, start));
-        }
-
-        const p = currentDoc.slice(start, end);
-
-        if (node.nodes[p] != null) {
-          res.push(path.call(print, "nodes", p));
+    const mapped = await Promise.all(
+      splitAtElse(node).map(async (content) => {
+        // console.log(node);
+        let doc;
+        if (content in node.nodes) {
+          doc = content;
         } else {
-          res.push(p);
+          doc = await textToDoc(content, { ...options, parser: "html" });
         }
-        lastEnd = end;
-      }
 
-      if (lastEnd > 0 && currentDoc.length > lastEnd) {
-        res.push(currentDoc.slice(lastEnd));
-      }
+        return utils.mapDoc(doc, (currentDoc) => {
+          if (typeof currentDoc !== "string") {
+            return currentDoc;
+          }
 
-      return res;
-    });
+          const idxs = findPlaceholders(currentDoc);
+          if (idxs.length === 0) {
+            return currentDoc;
+          }
+          let res = [];
+          let lastEnd = 0;
+
+          for (const { start, end } of idxs) {
+            if (lastEnd < start) {
+              res.push(currentDoc.slice(lastEnd, start));
+            }
+
+            const p = currentDoc.slice(start, end);
+
+            if (p in node.nodes) {
+              res.push(path.call(print, "nodes", p));
+            } else {
+              res.push(p);
+            }
+
+            lastEnd = end;
+          }
+
+          if (lastEnd > 0 && currentDoc.length > lastEnd) {
+            res.push(currentDoc.slice(lastEnd));
+          }
+
+          return res;
+        });
+      }),
+    );
+
+    if (node.type === "block") {
+      return builders.group([
+        path.call(print, "nodes", node.start.id),
+        builders.indent([builders.softline, mapped]),
+        builders.hardline,
+        path.call(print, "nodes", node.end.id),
+      ]);
+    }
+
+    return [...mapped, builders.hardline];
   };
 }
+
+const splitAtElse = (node) => {
+  return [node.content];
+};
 
 export const findPlaceholders = (text) => {
   let i = 0;

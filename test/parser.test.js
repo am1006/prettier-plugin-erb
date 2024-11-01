@@ -5,8 +5,8 @@ test("test expression", () => {
   const source = `<div class="<%= className %>">\n<%= test %>\n</div>`;
   const root = parse(source);
 
-  expect(root.nodes["#~1~#"].content).toContain("className");
-  expect(root.nodes["#~2~#"].content).toContain("test");
+  expect(root.nodes["#~1~#"].content).toBe("className");
+  expect(root.nodes["#~2~#"].content).toBe("test");
 });
 
 test("test statement", () => {
@@ -14,6 +14,7 @@ test("test statement", () => {
   const root = parse(source);
 
   expect(root.nodes["#~1~#"].keyword).toBe("if");
+  expect(root.nodes["#~1~#"].content).toBe("if @test");
 });
 
 test("test statement no space", () => {
@@ -21,11 +22,12 @@ test("test statement no space", () => {
   const root = parse(source);
 
   expect(root.nodes["#~1~#"].keyword).toBe("if");
+  expect(root.nodes["#~1~#"].content).toBe("if");
 });
 
 test("test statement without keyword", () => {
   const source = `<div><% @test = true %></div>`;
   const root = parse(source);
 
-  expect(root.nodes["#~1~#"].content).toContain("@test = true");
+  expect(root.nodes["#~1~#"].content).toBe("@test = true");
 });
