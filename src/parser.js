@@ -72,7 +72,7 @@ export const parse = (text) => {
     root.nodes[node.id] = {
       ...node,
       type: "expression",
-      content: expression,
+      content: expression.trim(),
     };
 
     i += match.index + placeholder.length;

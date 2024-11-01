@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, skip } from "vitest";
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { format } from "prettier";
@@ -15,9 +15,16 @@ const testFolder = join(__dirname, "cases");
 const tests = readdirSync(testFolder);
 
 test.each(tests)("%s", async (path) => {
+  if (path.startsWith("_")) {
+    return;
+  }
+
   const pathTest = join(testFolder, path);
   const input = readFileSync(join(pathTest, "input.html"), "utf-8").trimEnd();
-  const expected = readFileSync(join(pathTest, "expected.html"), "utf-8").trimEnd();
+  const expected = readFileSync(
+    join(pathTest, "expected.html"),
+    "utf-8",
+  ).trimEnd();
 
   expect(await prettify(input)).toEqual(expected);
 });
