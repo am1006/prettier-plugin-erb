@@ -1,8 +1,8 @@
 {
   "name": "prettier-plugin-html-erb",
   "version": "0.0.1",
-  "description": "Prettier plugin for formatting .html.erb files.",
-  "license": "MIT",
+  "description": "",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/forazens/prettier-plugin-html-erb"
@@ -20,11 +20,10 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "build:regex": "babel src/regex_editable.js -o src/regex.js",
     "test": "vitest"
   },
   "author": "Daniel Castillo",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "regex": "^4.3.3"
   },
@@ -32,7 +31,10 @@
     "prettier": "^3.0.0"
   },
   "devDependencies": {
-    "vitest": "^2.1.4",
-    "prettier": "^3.3.3"
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "babel-plugin-transform-regex": "^4.3.3",
+    "prettier": "^3.3.3",
+    "vitest": "^2.1.4"
   }
 }
