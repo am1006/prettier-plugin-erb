@@ -9,11 +9,12 @@ const re = regex`
   (?<node>
     # Expression
     <%=\s*(?<expression> (?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?)\s*%>
+    | 
+    # Comment
+    <%\#\s*(?<comment>\g<EVERYTHING>)\s* %>
     |
     # Statement
     <%\s*(?<statement> (?<keyword>\g<KEYWORD>?) (?>\g<ESCAPEQUOTES> | \g<ALLSYMBOLS>)*?)\s* %>
-
-
   )
 
   (?(DEFINE)
@@ -63,6 +64,7 @@ export const parse = (text) => {
     const matchText = match.groups.node;
     const expression = match.groups.expression;
     const statement = match.groups.statement;
+    const comment = match.groups.comment;
 
     const placeholder = generatePlaceholder();
 
@@ -72,6 +74,23 @@ export const parse = (text) => {
       index: match.index + i,
       length: match[0].length,
     };
+
+    if (comment != null) {
+      root.nodes[node.id] = {
+        ...node,
+        type: "comment",
+        content: comment,
+      };
+
+      root.content = replaceAt(
+        root.content,
+        placeholder,
+        match.index + i,
+        match[0].length,
+      );
+
+        i += match.index + placeholder.length;
+    }
 
     if (expression != null) {
       root.nodes[node.id] = {

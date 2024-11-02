@@ -29,6 +29,12 @@ export function print(path, options, print) {
     return printStatement(node);
   }
 
+  if (node.type === "comment") {
+    return builders.group([builders.join(" ", ["<%#", node.content, "%>"])], {
+      shouldBreak: true, // I dunno if this will have consequences in another parts
+    });
+  }
+
   return [];
 }
 
