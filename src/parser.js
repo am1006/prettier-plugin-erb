@@ -94,6 +94,7 @@ export const parse = (text) => {
       const keyword = match.groups.keyword;
 
       if (keyword === "end") {
+        
         // Traverse the statement stacks until I find the matching statement group
         let start;
         while (!start) {
@@ -104,8 +105,10 @@ export const parse = (text) => {
             );
           }
 
+          const hasValidKeyword = ["if", "unless"].includes(start.keyword);
+          const hasBlock = start.content.match(/do( \|[\w_, ]+\|)?$/) != null;
           // If the statement is not matching, replace the content with the placeholder
-          if (!["if"].includes(start.keyword)) {
+          if (!hasValidKeyword && !hasBlock) {
             root.content = replaceAt(
               root.content,
               start.id,

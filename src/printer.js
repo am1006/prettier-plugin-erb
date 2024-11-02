@@ -37,7 +37,7 @@ const printStatement = (node) => {
     builders.join(" ", ["<%", node.content, "%>"]),
   );
 
-  if (["else"].includes(node.keyword)) {
+  if (["else", "elsif"].includes(node.keyword)) {
     return [builders.dedent(builders.hardline), statement, builders.hardline];
   }
 
@@ -114,7 +114,7 @@ const splitAtElse = (node) => {
   const elseNodes = Object.values(node.nodes).filter(
     (n) =>
       n.type === "statement" &&
-      ["else"].includes(n.keyword) &&
+      ["else", "elsif"].includes(n.keyword) &&
       node.content.search(n.id) !== -1,
   );
 
@@ -122,7 +122,7 @@ const splitAtElse = (node) => {
     return [node.content];
   }
 
-  const re = new RegExp(`(${elseNodes.map((e) => e.id).join(")|()")})`);
+  const re = new RegExp(`(${elseNodes.map((e) => e.id).join(")|(")})`);
   return node.content.split(re).filter(Boolean);
 };
 

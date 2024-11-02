@@ -1,0 +1,23 @@
+<div>
+<% if @test1 %>
+<h1>Test1</h1>
+<% elsif @test2 %>
+<div>
+<% if @test3 != "h2" %>
+<h2>Test3</h2>
+<% else %>
+<h2>Test2</h2>
+<% end %>
+</div>
+<% else %>
+<h1>Test else</h1>
+<% end %>
+</div>
+
+<main>
+<% if @main == "body" %>
+<article>Body</article>
+<% else %>
+<article>Else</article>
+<% end %>
+</main>

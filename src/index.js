@@ -5,7 +5,7 @@ const PLUGIN_KEY = "erb-template";
 
 export const languages = [
   {
-    name: "ErbTemplate",
+    name: "htmlErbTemplate",
     parsers: [PLUGIN_KEY],
     extensions: [".html.erb"],
   },
