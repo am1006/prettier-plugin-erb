@@ -1,5 +1,5 @@
-import { parse } from "./parser";
-import { print, embed, getVisitorKeys } from "./printer";
+import { parse } from "./parser.js";
+import { print, embed, getVisitorKeys } from "./printer.js";
 
 const PLUGIN_KEY = "erb-template";
 

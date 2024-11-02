@@ -74,27 +74,34 @@ export const parse = (text) => {
     };
 
     if (expression != null) {
-      root.content = replaceAt(
-        root.content,
-        placeholder,
-        match.index + i,
-        match[0].length,
-      );
-
       root.nodes[node.id] = {
         ...node,
         type: "expression",
         content: expression,
       };
 
-      i += match.index + placeholder.length;
+      const expressionIsBlock = expression.match(/do( \|[\w_, ]+\|)?$/) != null;
+      if (expressionIsBlock) {
+        // If a expression is opening a block, we'll treat that expression as a statement to
+        // simplify the logic of blocks
+        statementStack.push(root.nodes[placeholder]);
+        i += match.index + match[0].length;
+      } else {
+        root.content = replaceAt(
+          root.content,
+          placeholder,
+          match.index + i,
+          match[0].length,
+        );
+
+        i += match.index + placeholder.length;
+      }
     }
 
     if (statement != null) {
       const keyword = match.groups.keyword;
 
       if (keyword === "end") {
-        
         // Traverse the statement stacks until I find the matching statement group
         let start;
         while (!start) {
@@ -168,7 +175,7 @@ export const parse = (text) => {
         };
         statementStack.push(root.nodes[placeholder]);
 
-        i += match.index + placeholder.length;
+        i += match.index + match[0].length;
       }
     }
   }
