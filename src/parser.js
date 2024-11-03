@@ -1,4 +1,3 @@
-import { regex } from "regex";
 import re from "./regex.js";
 
 const PLACEHOLDER = {
@@ -70,7 +69,7 @@ export const parse = (text) => {
         match[0].length,
       );
 
-        i += match.index + placeholder.length;
+      i += match.index + placeholder.length;
     }
 
     if (expression != null) {
@@ -78,12 +77,14 @@ export const parse = (text) => {
         ...node,
         type: "expression",
         content: expression,
+        startBlock: false,
       };
 
       const expressionIsBlock = expression.match(/do( \|[\w_, ]+\|)?$/) != null;
       if (expressionIsBlock) {
         // If a expression is opening a block, we'll treat that expression as a statement to
         // simplify the logic of blocks
+        root.nodes[placeholder].startBlock = true;
         statementStack.push(root.nodes[placeholder]);
         i += match.index + match[0].length;
       } else {

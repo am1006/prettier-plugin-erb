@@ -7,7 +7,7 @@ import * as erbPlugin from "../src/index";
 const prettify = (code, options = {}) =>
   format(code, {
     parser: "erb-template",
-    plugins: [erbPlugin],
+    plugins: ["@prettier/plugin-ruby", erbPlugin],
     ...options,
   });
 
@@ -24,8 +24,11 @@ test.each(tests)("%s", async (path) => {
 
   const pathTest = join(testFolder, path);
   const input = readFileSync(join(pathTest, "input.html")).toString();
-  const expected = readFileSync(
-    join(pathTest, "expected.html")).toString();
+  const expected = readFileSync(join(pathTest, "expected.html")).toString();
 
-  expect(await prettify(input)).toEqual(expected);
+  const prettifiedInput = await prettify(input);
+  // console.log("INPUT\n", prettifiedInput);
+  // console.log("EXPECTED\n", expected);
+
+  expect(prettifiedInput).toEqual(expected);
 });
