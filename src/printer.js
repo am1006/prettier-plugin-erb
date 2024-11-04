@@ -183,28 +183,6 @@ const splitAtElse = (node) => {
   return node.content.split(re).filter(Boolean);
 };
 
-const getMultilineGroup = (content) => {
-  // Dedent the content by the minimum indentation of any non-blank lines.
-  const lines = content.split("\n");
-  const minIndent = Math.min(
-    ...lines
-      .slice(1) // can't be the first line
-      .filter((line) => line.trim())
-      .map((line) => line.search(/\S/)),
-  );
-
-  return builders.group(
-    lines.map((line, i) => [
-      builders.hardline,
-      i === 0
-        ? line.trim() // don't dedent the first line
-        : line.trim()
-          ? line.slice(minIndent).trimEnd()
-          : "",
-    ]),
-  );
-};
-
 export const findPlaceholders = (text) => {
   let i = 0;
   let res = [];
