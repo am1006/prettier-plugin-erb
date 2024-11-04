@@ -1,13 +1,17 @@
 {
-  "name": "prettier-plugin-html-erb",
+  "name": "@4az/prettier-plugin-html-erb",
+  "author": "Daniel Castillo",
   "version": "0.0.1",
-  "description": "",
-  "license": "ISC",
+  "description": "Prettier plugin for formatting html erb templates.",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/forazens/prettier-plugin-html-erb"
   },
   "homepage": "https://github.com/forazens/prettier-plugin-html-erb#readme",
+  "bugs": {
+    "url": "https://github.com/ForAzens/prettier-plugin-html-erb/issues"
+  }, 
   "keywords": [
     "prettier",
     "plugin",
@@ -24,12 +28,12 @@
     "build:regex": "babel src/regex_editable.js -o src/regex.js",
     "test": "vitest"
   },
-  "author": "Daniel Castillo",
   "dependencies": {
     "regex": "^4.3.3"
   },
   "peerDependencies": {
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "@prettier/plugin-ruby": "^4.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
