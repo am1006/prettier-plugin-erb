@@ -12,7 +12,7 @@
   "homepage": "https://github.com/forazens/prettier-plugin-html-erb#readme",
   "bugs": {
     "url": "https://github.com/ForAzens/prettier-plugin-html-erb/issues"
-  }, 
+  },
   "keywords": [
     "prettier",
     "plugin",
@@ -23,18 +23,17 @@
     "rails"
   ],
   "main": "src/index.js",
-  "files": ["src/**/*.js"],
+  "files": [
+    "src/**/*.js"
+  ],
   "type": "module",
   "scripts": {
     "build:regex": "babel src/regex_editable.js -o src/regex.js",
     "test": "vitest"
   },
-  "dependencies": {
-    "regex": "^4.3.3"
-  },
   "peerDependencies": {
-    "prettier": "^3.0.0",
-    "@prettier/plugin-ruby": "^4.0.0"
+    "@prettier/plugin-ruby": "^4.0.0",
+    "prettier": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
@@ -42,6 +41,7 @@
     "@prettier/plugin-ruby": "^4.0.4",
     "babel-plugin-transform-regex": "^4.3.3",
     "prettier": "^3.3.3",
+    "regex": "^4.4.0",
     "vitest": "^2.1.4"
   }
 }
