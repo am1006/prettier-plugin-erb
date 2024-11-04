@@ -128,6 +128,9 @@ export const parse = (text) => {
             start = undefined;
             continue;
           }
+
+          // Set that the start statement is opening a block
+          start.startBlock = true;
         }
 
         const end = {

@@ -40,62 +40,11 @@ export function print(path, options, print) {
   return [];
 }
 
-const printExpression = (node) => {
-  const multiline = node.content.includes("\n");
-
-  if (multiline) {
-    const lines = node.content.split("\n");
-
-    return concat([
-      ["<%=", " "],
-      ...lines.map((line, i) => [
-        i !== 0 ? "    " : "",
-        line,
-        i !== lines.length - 1 ? hardline : "",
-      ]),
-      [" ", "%>"],
-    ]);
-  }
-
-  return builders.group(
-    builders.join(" ", ["<%=", builders.indent(node.content), "%>"]),
-  );
-};
-
-const printStatement = (node) => {
-  const statement = builders.group(
-    builders.join(" ", ["<%", node.content, "%>"]),
-  );
-
-  if (["else", "elsif"].includes(node.keyword)) {
-    return [builders.dedent(builders.hardline), statement, builders.hardline];
-  }
-
-  return statement;
-};
-
-const formatRubyCode = async (node, textToDoc, options) => {
-  if (node.type !== "expression") {
-    return;
-  }
-
-  let doc;
-  if (node.type === "expression" && node.startBlock) {
-    const contentWithEnd = node.content + "\nend";
-    doc = await textToDoc(contentWithEnd, { ...options, parser: "ruby" });
-    doc = doc.slice(0, -4); // Remove temporal "\nend"
-  } else {
-    doc = await textToDoc(node.content, { ...options, parser: "ruby" });
-  }
-
-  node.contentPreRubyParser = node.content;
-  node.content = doc;
-};
-
 export function embed() {
   return async (textToDoc, print, path, options) => {
     const node = path.node;
 
+    // Format ruby code before constructing the Doc
     if ("nodes" in node) {
       for (const n of Object.values(node.nodes)) {
         if (!n.contentPreRubyParser) {
@@ -201,4 +150,114 @@ export const findPlaceholders = (text) => {
   }
 
   return res;
+};
+
+const printExpression = (node) => {
+  const multiline = node.content.includes("\n");
+
+  if (multiline) {
+    const lines = node.content.split("\n");
+    const templateIndicatorSpace = " ".repeat("<%= ".length);
+
+    return concat([
+      ["<%=", " "],
+      ...lines.map((line, i) => [
+        i !== 0 ? templateIndicatorSpace : "",
+        line,
+        i !== lines.length - 1 ? hardline : "",
+      ]),
+      [" ", "%>"],
+    ]);
+  }
+
+  return builders.group(
+    builders.join(" ", ["<%=", builders.indent(node.content), "%>"]),
+  );
+};
+
+const printStatement = (node) => {
+  const multiline = node.content.includes("\n");
+
+  if (multiline) {
+    const lines = node.content.split("\n");
+    const templateIndicatorSpace = " ".repeat("<% ".length);
+
+    return concat([
+      ["<%", " "],
+      ...lines.map((line, i) => [
+        i !== 0 ? templateIndicatorSpace : "",
+        line,
+        i !== lines.length - 1 ? hardline : "",
+      ]),
+      [" ", "%>"],
+    ]);
+  }
+
+  const statement = builders.group(
+    builders.join(" ", ["<%", node.content, "%>"]),
+  );
+
+  if (["else", "elsif"].includes(node.keyword)) {
+    return [builders.dedent(builders.hardline), statement, builders.hardline];
+  }
+
+  return statement;
+};
+
+const IF_BLOCK_FALSE = "if true\n";
+const END_BLOCK_FALSE = "\nend";
+const INCOHERENT_LINES = "\n  @var = 2\n  @var3 = 4";
+
+const formatStatementBlock = async (node, textToDoc, options) => {
+  if (node.keyword === "if") {
+    const contentFalsed = node.content + END_BLOCK_FALSE;
+    const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+    return doc.slice(0, -END_BLOCK_FALSE.length);
+  }
+
+  if (node.keyword === "else") {
+    const contentFalsed = IF_BLOCK_FALSE + node.content + END_BLOCK_FALSE;
+    const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+    return doc.slice(IF_BLOCK_FALSE.length, -END_BLOCK_FALSE.length);
+  }
+
+  if (node.keyword === "elsif") {
+    const contentFalsed = IF_BLOCK_FALSE + node.content + END_BLOCK_FALSE;
+    const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+    return doc.slice(IF_BLOCK_FALSE.length, -END_BLOCK_FALSE.length);
+  }
+
+  const contentFalsed = node.content + INCOHERENT_LINES + END_BLOCK_FALSE;
+  let doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+  return doc.slice(0, -(INCOHERENT_LINES.length + END_BLOCK_FALSE.length));
+};
+
+const formatExpressionBlock = async (node, textToDoc, options) => {
+  const contentWithEnd = node.content + END_BLOCK_FALSE;
+  const doc = await textToDoc(contentWithEnd, { ...options, parser: "ruby" });
+  return doc.slice(0, -END_BLOCK_FALSE.length);
+};
+
+const formatRubyCode = async (node, textToDoc, options) => {
+  if (
+    !["expression", "statement"].includes(node.type) ||
+    node.keyword === "end"
+  ) {
+    return;
+  }
+
+  let doc;
+  if (node.startBlock || ["else", "elsif"].includes(node.keyword)) {
+    if (node.type === "expression") {
+      doc = await formatExpressionBlock(node, textToDoc, options);
+    }
+    if (node.type === "statement") {
+      doc = await formatStatementBlock(node, textToDoc, options);
+    }
+  } else {
+    doc = await textToDoc(node.content, { ...options, parser: "ruby" });
+  }
+
+  node.contentPreRubyParser = node.content;
+  node.content = doc;
 };
