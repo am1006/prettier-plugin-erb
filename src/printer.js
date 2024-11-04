@@ -74,21 +74,27 @@ const printStatement = (node) => {
   return statement;
 };
 
+const formatRubyCode = async (node, textToDoc, options) => {
+  if (node.type !== "expression") {
+    return;
+  }
+  // TODO: Search a way to format incomplete ruby blocks
+  if (node.type === "expression" && node.startBlock) return;
+
+  const doc = await textToDoc(node.content, { ...options, parser: "ruby" });
+  node.contentPreRubyParser = node.content;
+  node.content = doc;
+};
+
 export function embed() {
   return async (textToDoc, print, path, options) => {
     const node = path.node;
 
-    if (node.type === "root") {
+    if ("nodes" in node) {
       for (const n of Object.values(node.nodes)) {
-        if (n.type !== "expression") {
-          continue;
+        if (!n.contentPreRubyParser) {
+          await formatRubyCode(n, textToDoc, options);
         }
-        // TODO: Search a way to format incomplete ruby blocks
-        if (n.type === "expression" && n.startBlock) continue;
-
-        const doc = await textToDoc(n.content, { ...options, parser: "ruby" });
-        n.contentPreRubyParser = n.content;
-        n.content = doc;
       }
     }
 
