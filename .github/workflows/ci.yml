@@ -18,8 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
-    - name: "Use Ruby ${{ matrix.ruby }}"
+    - name: Use Ruby ${{ matrix.ruby }}
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
     - run: gem install prettier_print syntax_tree
