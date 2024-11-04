@@ -1,0 +1,14 @@
+<div class="mt-1 block w-full">
+  <% model
+       .send(@type)
+       &.each do |asset| %>
+    <%= image_tag asset.url,
+                  class:
+                    "inline-block h-20 w-20 object-cover rounded-md #{asset_class_selected(asset)}",
+                  id: "model-#{asset.id}",
+                  data: {
+                    current_state: "done",
+                    model_target: "img",
+                  } %>
+  <% end %>
+</div>

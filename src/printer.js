@@ -212,30 +212,51 @@ const formatStatementBlock = async (node, textToDoc, options) => {
   if (node.keyword === "if") {
     const contentFalsed = node.content + END_BLOCK_FALSE;
     const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
-    return doc.slice(0, -END_BLOCK_FALSE.length);
+
+    const numberLinesExtraBottom = END_BLOCK_FALSE.split("\n").length - 1;
+    return doc.split("\n").slice(0, -numberLinesExtraBottom).join("\n");
   }
 
   if (node.keyword === "else") {
     const contentFalsed = IF_BLOCK_FALSE + node.content + END_BLOCK_FALSE;
     const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
-    return doc.slice(IF_BLOCK_FALSE.length, -END_BLOCK_FALSE.length);
+
+    const numberLinesExtraTop = IF_BLOCK_FALSE.split("\n").length - 1;
+    const numberLinesExtraBottom = END_BLOCK_FALSE.split("\n").length - 1;
+    return doc
+      .split("\n")
+      .slice(numberLinesExtraTop, -numberLinesExtraBottom)
+      .join("\n");
   }
 
   if (node.keyword === "elsif") {
     const contentFalsed = IF_BLOCK_FALSE + node.content + END_BLOCK_FALSE;
     const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
-    return doc.slice(IF_BLOCK_FALSE.length, -END_BLOCK_FALSE.length);
+
+    const numberLinesExtraTop = IF_BLOCK_FALSE.split("\n").length - 1;
+    const numberLinesExtraBottom = END_BLOCK_FALSE.split("\n").length - 1;
+    return doc
+      .split("\n")
+      .slice(numberLinesExtraTop, -numberLinesExtraBottom)
+      .join("\n");
   }
 
   const contentFalsed = node.content + INCOHERENT_LINES + END_BLOCK_FALSE;
   let doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
-  return doc.slice(0, -(INCOHERENT_LINES.length + END_BLOCK_FALSE.length));
+
+  const numberLinesExtraBottom =
+    (INCOHERENT_LINES + END_BLOCK_FALSE).split("\n").length - 1;
+  return doc.split("\n").slice(0, -numberLinesExtraBottom).join("\n");
 };
 
 const formatExpressionBlock = async (node, textToDoc, options) => {
-  const contentWithEnd = node.content + END_BLOCK_FALSE;
-  const doc = await textToDoc(contentWithEnd, { ...options, parser: "ruby" });
-  return doc.slice(0, -END_BLOCK_FALSE.length);
+  const contentWithEnd = node.content + INCOHERENT_LINES + END_BLOCK_FALSE;
+  let doc = await textToDoc(contentWithEnd, { ...options, parser: "ruby" });
+
+  const numberLinesExtraBottom =
+    (INCOHERENT_LINES + END_BLOCK_FALSE).split("\n").length - 1;
+
+  return doc.split("\n").slice(0, -numberLinesExtraBottom).join("\n");
 };
 
 const formatRubyCode = async (node, textToDoc, options) => {
