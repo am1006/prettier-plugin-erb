@@ -78,10 +78,16 @@ const formatRubyCode = async (node, textToDoc, options) => {
   if (node.type !== "expression") {
     return;
   }
-  // TODO: Search a way to format incomplete ruby blocks
-  if (node.type === "expression" && node.startBlock) return;
 
-  const doc = await textToDoc(node.content, { ...options, parser: "ruby" });
+  let doc;
+  if (node.type === "expression" && node.startBlock) {
+    const contentWithEnd = node.content + "\nend";
+    doc = await textToDoc(contentWithEnd, { ...options, parser: "ruby" });
+    doc = doc.slice(0, -4); // Remove temporal "\nend"
+  } else {
+    doc = await textToDoc(node.content, { ...options, parser: "ruby" });
+  }
+
   node.contentPreRubyParser = node.content;
   node.content = doc;
 };
