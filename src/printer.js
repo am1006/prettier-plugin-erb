@@ -1,6 +1,8 @@
 import { doc } from "prettier";
 const { utils, builders } = doc;
 
+const { concat, hardline } = doc.builders;
+
 process.env.PRETTIER_DEBUG = "true";
 
 export const getVisitorKeys = (ast) => {
@@ -43,24 +45,16 @@ const printExpression = (node) => {
 
   if (multiline) {
     const lines = node.content.split("\n");
-    // I can't seem to grasp why prettier doesn't maintain the spaces that pass in the string.
-    // This is the only solution that seems to work right now, so I'll leave it like that for now.
-    const threeFuckingSpaces = "   ";
 
-    return builders.concat(
-      builders.join("", [
-        [builders.join(" ", ["<%=", lines[0]]), builders.hardline], // First line
-        lines
-          .slice(1, -1)
-          .map((line) => [threeFuckingSpaces + line, builders.hardline]), // Rest of lines
-        [
-          builders.join(" ", [
-            threeFuckingSpaces + lines[lines.length - 1],
-            "%>",
-          ]),
-        ], // Last lines
+    return concat([
+      ["<%=", " "],
+      ...lines.map((line, i) => [
+        i !== 0 ? "    " : "",
+        line,
+        i !== lines.length - 1 ? hardline : "",
       ]),
-    );
+      [" ", "%>"],
+    ]);
   }
 
   return builders.group(

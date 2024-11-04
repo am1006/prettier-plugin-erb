@@ -27,8 +27,11 @@ test.each(tests)("%s", async (path) => {
   const expected = readFileSync(join(pathTest, "expected.html")).toString();
 
   const prettifiedInput = await prettify(input);
-  // console.log("INPUT\n", prettifiedInput);
-  // console.log("EXPECTED\n", expected);
+  // console.log("INPUT");
+  // console.log(prettifiedInput);
+  // console.log("EXPECTED");
+  // console.log(expected);
 
   expect(prettifiedInput).toEqual(expected);
 });
+
