@@ -18,6 +18,7 @@
     "rails"
   ],
   "main": "src/index.js",
+  "files": ["src/**/*.js"],
   "type": "module",
   "scripts": {
     "build:regex": "babel src/regex_editable.js -o src/regex.js",
