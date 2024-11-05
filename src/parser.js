@@ -79,6 +79,10 @@ export const parse = (text) => {
         type: "expression",
         content: expression,
         startBlock: false,
+        delimiters: {
+          start: match.groups.startDelimiterEx,
+          end: match.groups.endDelimiterEx,
+        },
       };
 
       const expressionIsBlock = expression.match(/do( \|[\w_, ]+\|)?$/) != null;
@@ -114,7 +118,9 @@ export const parse = (text) => {
             );
           }
 
-          const hasValidKeyword = ["if", "unless", "case"].includes(start.keyword);
+          const hasValidKeyword = ["if", "unless", "case"].includes(
+            start.keyword,
+          );
           const hasBlock = start.content.match(/do( \|[\w_, ]+\|)?$/) != null;
           // If the statement is not matching, replace the content with the placeholder
           if (!hasValidKeyword && !hasBlock) {
@@ -140,6 +146,10 @@ export const parse = (text) => {
           type: "statement",
           content: statement,
           keyword,
+          delimiters: {
+            start: match.groups.startDelimiter,
+            end: match.groups.endDelimiter,
+          },
         };
         root.nodes[end.id] = end;
 
@@ -178,6 +188,10 @@ export const parse = (text) => {
           type: "statement",
           content: statement,
           keyword,
+          delimiters: {
+            start: match.groups.startDelimiter,
+            end: match.groups.endDelimiter,
+          },
         };
         statementStack.push(root.nodes[placeholder]);
 

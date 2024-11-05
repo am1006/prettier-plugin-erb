@@ -191,47 +191,51 @@ export const findPlaceholders = (text) => {
 
 const printExpression = (node) => {
   const multiline = node.content.includes("\n");
+  const openingErb = "<%=" + node.delimiters.start;
+  const closingErb = node.delimiters.end + "%>";
 
   if (multiline) {
     const lines = node.content.split("\n");
-    const templateIndicatorSpace = " ".repeat("<%= ".length);
+    const templateIndicatorSpace = " ".repeat((openingErb + " ").length);
 
     return concat([
-      ["<%=", " "],
+      [openingErb, " "],
       ...lines.map((line, i) => [
         i !== 0 ? templateIndicatorSpace : "",
         line,
         i !== lines.length - 1 ? hardline : "",
       ]),
-      [" ", "%>"],
+      [" ", closingErb],
     ]);
   }
 
   return builders.group(
-    builders.join(" ", ["<%=", builders.indent(node.content), "%>"]),
+    builders.join(" ", [openingErb, builders.indent(node.content), closingErb]),
   );
 };
 
 const printStatement = (node) => {
   const multiline = node.content.includes("\n");
+  const openingErb = "<%" + node.delimiters.start;
+  const closingErb = node.delimiters.end + "%>";
 
   if (multiline) {
     const lines = node.content.split("\n");
-    const templateIndicatorSpace = " ".repeat("<% ".length);
+    const templateIndicatorSpace = " ".repeat((openingErb + " ").length);
 
     return concat([
-      ["<%", " "],
+      [openingErb, " "],
       ...lines.map((line, i) => [
         i !== 0 ? templateIndicatorSpace : "",
         line,
         i !== lines.length - 1 ? hardline : "",
       ]),
-      [" ", "%>"],
+      [" ", closingErb],
     ]);
   }
 
   const statement = builders.group(
-    builders.join(" ", ["<%", node.content, "%>"]),
+    builders.join(" ", [openingErb, node.content, closingErb]),
   );
 
   if (
