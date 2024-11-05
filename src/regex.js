@@ -1,1 +1,1 @@
-export default /(?<node><%=\s*(?<expression>(?:(?=((?:'[^']*'|"[^"]*")|[\s\S]))\3)*?)\s*%>|<%#\s*(?<comment>[\s\S]*?)\s*%>|<%\s*(?<statement>(?<keyword>(?:if|else|elsif|unless|end)?)(?:(?=((?:'[^']*'|"[^"]*")|[\s\S]))\7)*?)\s*%>)/u;
+export default /(?<node><%=\s*(?<expression>(?:(?=((?:'[^']*'|"[^"]*")|[\s\S]))\3)*?)\s*%>|<%#\s*(?<comment>[\s\S]*?)\s*%>|<%\s*(?<statement>(?<keyword>(?:if|else|elsif|unless|case|when|end)?)(?:(?=((?:'[^']*'|"[^"]*")|[\s\S]))\7)*?)\s*%>)/u;

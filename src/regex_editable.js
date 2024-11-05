@@ -16,6 +16,6 @@ export default regex`
     (?<EVERYTHING>		\g<ALLSYMBOLS>*?)
     (?<ALLSYMBOLS>    [\s\S])
     (?<ESCAPEQUOTES>	'[^']*'|"[^"]*")
-    (?<KEYWORD>       if|else|elsif|unless|end)
+    (?<KEYWORD>       if|else|elsif|unless|case|when|end)
   )
 `;

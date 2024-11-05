@@ -104,23 +104,60 @@ export function embed() {
     );
 
     if (node.type === "block") {
-      return builders.group([
-        path.call(print, "nodes", node.start.id),
-        builders.indent([builders.softline, mapped]),
-        builders.hardline,
-        path.call(print, "nodes", node.end.id),
-      ]);
+      return buildBlock(path, print, node, mapped);
     }
 
     return [...mapped, builders.hardline];
   };
 }
 
+// Checks if there is content between case and when, not only whitespace
+const blockHasContentBetweenCaseAndWhen = (block) => {
+  if (block.start.keyword !== "case") {
+    return false;
+  }
+
+  const firstPlaceholder = findPlaceholders(block.content)[0];
+  if (firstPlaceholder.length === 0) {
+    return false;
+  }
+
+  const isThereOnlyWhiteSpace = block.content
+    .slice(0, firstPlaceholder.start)
+    .match(/^\s*$/);
+
+  if (isThereOnlyWhiteSpace != null) {
+    return true;
+  }
+};
+
+const buildBlock = (path, print, block, mapped) => {
+  if (block.containsNewLines) {
+    const doc = builders.group([
+      path.call(print, "nodes", block.start.id),
+      builders.indent([
+        blockHasContentBetweenCaseAndWhen(block) ? "" : builders.softline,
+        mapped,
+      ]),
+      builders.hardline,
+      path.call(print, "nodes", block.end.id),
+    ]);
+
+    return doc;
+  }
+
+  return builders.group([
+    path.call(print, "nodes", block.start.id),
+    mapped,
+    path.call(print, "nodes", block.end.id),
+  ]);
+};
+
 const splitAtElse = (node) => {
   const elseNodes = Object.values(node.nodes).filter(
     (n) =>
       n.type === "statement" &&
-      ["else", "elsif"].includes(n.keyword) &&
+      ["else", "elsif", "when"].includes(n.keyword) &&
       node.content.search(n.id) !== -1,
   );
 
@@ -197,18 +234,50 @@ const printStatement = (node) => {
     builders.join(" ", ["<%", node.content, "%>"]),
   );
 
-  if (["else", "elsif"].includes(node.keyword)) {
+  if (
+    ["else", "elsif", "when"].includes(node.keyword) &&
+    surroundingBlock(node)?.containsNewLines
+  ) {
     return [builders.dedent(builders.hardline), statement, builders.hardline];
   }
 
   return statement;
 };
 
+const surroundingBlock = (node) => {
+  return Object.values(node.nodes).find(
+    (n) => n.type === "block" && n.content.search(node.id) !== -1,
+  );
+};
+
 const IF_BLOCK_FALSE = "if true\n";
 const END_BLOCK_FALSE = "\nend";
 const INCOHERENT_LINES = "\n  @var = 2\n  @var3 = 4";
+const WHEN_BLOCK_FALSE = "\nwhen 'block_false'";
+const CASE_BLOCK_FALSE = "case @test\n";
 
 const formatStatementBlock = async (node, textToDoc, options) => {
+  if (node.keyword === "when") {
+    const contentFalsed = CASE_BLOCK_FALSE + node.content + END_BLOCK_FALSE;
+    const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+
+    const numberLinesExtraTop = CASE_BLOCK_FALSE.split("\n").length - 1;
+    const numberLinesExtraBottom = END_BLOCK_FALSE.split("\n").length - 1;
+    return doc
+      .split("\n")
+      .slice(numberLinesExtraTop, -numberLinesExtraBottom)
+      .join("\n");
+  }
+
+  if (node.keyword === "case") {
+    const contentFalsed = node.content + WHEN_BLOCK_FALSE + END_BLOCK_FALSE;
+    const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
+
+    const numberLinesExtraBottom =
+      (WHEN_BLOCK_FALSE + END_BLOCK_FALSE).split("\n").length - 1;
+    return doc.split("\n").slice(0, -numberLinesExtraBottom).join("\n");
+  }
+
   if (node.keyword === "if") {
     const contentFalsed = node.content + END_BLOCK_FALSE;
     const doc = await textToDoc(contentFalsed, { ...options, parser: "ruby" });
@@ -268,7 +337,7 @@ const formatRubyCode = async (node, textToDoc, options) => {
   }
 
   let doc;
-  if (node.startBlock || ["else", "elsif"].includes(node.keyword)) {
+  if (node.startBlock || ["else", "elsif", "when"].includes(node.keyword)) {
     if (node.type === "expression") {
       doc = await formatExpressionBlock(node, textToDoc, options);
     }

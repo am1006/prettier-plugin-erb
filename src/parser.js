@@ -53,6 +53,7 @@ export const parse = (text) => {
       originalText: matchText,
       index: match.index + i,
       length: match[0].length,
+      nodes: root.nodes,
     };
 
     if (comment != null) {
@@ -113,7 +114,7 @@ export const parse = (text) => {
             );
           }
 
-          const hasValidKeyword = ["if", "unless"].includes(start.keyword);
+          const hasValidKeyword = ["if", "unless", "case"].includes(start.keyword);
           const hasBlock = start.content.match(/do( \|[\w_, ]+\|)?$/) != null;
           // If the statement is not matching, replace the content with the placeholder
           if (!hasValidKeyword && !hasBlock) {
@@ -156,6 +157,7 @@ export const parse = (text) => {
             start.length,
             originalText.length - end.length,
           ),
+          containsNewLines: originalText.search("\n") !== -1,
           index: start.index,
           length: end.index + end.length - start.index,
           nodes: root.nodes,
