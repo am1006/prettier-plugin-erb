@@ -331,13 +331,16 @@ const formatExpressionBlock = async (node, textToDoc, options) => {
 const formatRubyCode = async (node, textToDoc, options) => {
   if (
     !["expression", "statement"].includes(node.type) ||
-    node.keyword === "end"
+    node.keyword === "end" ||
+    node.content.startsWith("yield")
   ) {
     return;
   }
 
   let doc;
   if (node.startBlock || ["else", "elsif", "when"].includes(node.keyword)) {
+    // We don't care if its an expressin or an statement
+
     if (node.type === "expression") {
       doc = await formatExpressionBlock(node, textToDoc, options);
     }
