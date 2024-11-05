@@ -44,9 +44,9 @@ This plugin doesn't have any special config. You can configure the ruby formatti
 
 # Roadmap
 There are a number of features I want to support:
+- [x] Support erb delimiters. Ex: `<%- delimiters -%>`.
 - [ ] Port library to TypeSript.
 - [ ] Add a way to ignore sections of code of being formatted.
-- [ ] Support erb delimiters. Ex: `<%- delimiters -%>`.
 - [ ] Support more ways to format blocks.
 
 # Testing
