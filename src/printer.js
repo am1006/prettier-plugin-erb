@@ -46,11 +46,9 @@ export function embed() {
 
     // Format ruby code before constructing the Doc
     if ("nodes" in node) {
-      await Promise.all(
-        Object.values(node.nodes).map((n) =>
-          formatRubyCode(n, textToDoc, options),
-        ),
-      );
+      for (const n of Object.values(node.nodes)) {
+        await formatRubyCode(n, textToDoc, options);
+      }
     }
 
     if (!node || !["root", "block"].includes(node.type)) {
