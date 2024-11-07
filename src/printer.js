@@ -46,11 +46,11 @@ export function embed() {
 
     // Format ruby code before constructing the Doc
     if ("nodes" in node) {
-      for (const n of Object.values(node.nodes)) {
-        if (!n.contentPreRubyParser) {
-          await formatRubyCode(n, textToDoc, options);
-        }
-      }
+      await Promise.all(
+        Object.values(node.nodes).map((n) =>
+          formatRubyCode(n, textToDoc, options),
+        ),
+      );
     }
 
     if (!node || !["root", "block"].includes(node.type)) {
@@ -334,6 +334,7 @@ const formatExpressionBlock = async (node, textToDoc, options) => {
 
 const formatRubyCode = async (node, textToDoc, options) => {
   if (
+    node.contentPreRubyParser ||
     !["expression", "statement"].includes(node.type) ||
     node.keyword === "end" ||
     node.content.startsWith("yield")
