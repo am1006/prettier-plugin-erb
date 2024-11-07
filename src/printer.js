@@ -198,19 +198,33 @@ const printExpression = (node) => {
     const lines = node.content.split("\n");
     const templateIndicatorSpace = " ".repeat((openingErb + " ").length);
 
-    return concat([
-      [openingErb, " "],
-      ...lines.map((line, i) => [
-        i !== 0 ? templateIndicatorSpace : "",
-        line,
-        i !== lines.length - 1 ? hardline : "",
-      ]),
-      [" ", closingErb],
-    ]);
+    return builders.group(
+      [
+        concat([
+          [openingErb, " "],
+          ...lines.map((line, i) => [
+            i !== 0 ? templateIndicatorSpace : "",
+            line,
+            i !== lines.length - 1 ? hardline : "",
+          ]),
+          [" ", closingErb],
+        ]),
+      ],
+      { shouldBreak: node.preNewLines > 0 },
+    );
   }
 
   return builders.group(
-    builders.join(" ", [openingErb, builders.indent(node.content), closingErb]),
+    [
+      builders.join(" ", [
+        openingErb,
+        builders.indent(node.content),
+        closingErb,
+      ]),
+    ],
+    {
+      shouldBreak: node.preNewLines > 0,
+    },
   );
 };
 
@@ -223,19 +237,23 @@ const printStatement = (node) => {
     const lines = node.content.split("\n");
     const templateIndicatorSpace = " ".repeat((openingErb + " ").length);
 
-    return concat([
-      [openingErb, " "],
-      ...lines.map((line, i) => [
-        i !== 0 ? templateIndicatorSpace : "",
-        line,
-        i !== lines.length - 1 ? hardline : "",
+    return builders.group(
+      concat([
+        [openingErb, " "],
+        ...lines.map((line, i) => [
+          i !== 0 ? templateIndicatorSpace : "",
+          line,
+          i !== lines.length - 1 ? hardline : "",
+        ]),
+        [" ", closingErb],
       ]),
-      [" ", closingErb],
-    ]);
+      { shouldBreak: node.preNewLines > 0 },
+    );
   }
 
   const statement = builders.group(
     builders.join(" ", [openingErb, node.content, closingErb]),
+    { shouldBreak: node.preNewLines > 0 },
   );
 
   if (

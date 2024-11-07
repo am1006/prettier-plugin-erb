@@ -48,9 +48,17 @@ export const parse = (text) => {
 
     const placeholder = generatePlaceholder();
 
+    const emptyLinesBetween = root.content
+      .slice(i, i + match.index)
+      .match(/^\s+$/) || [""];
+    const preNewLines = emptyLinesBetween.length
+      ? emptyLinesBetween[0].split("\n").length - 1
+      : 0;
+
     const node = {
       id: placeholder,
       originalText: matchText,
+      preNewLines,
       index: match.index + i,
       length: match[0].length,
       nodes: root.nodes,
@@ -168,6 +176,7 @@ export const parse = (text) => {
             originalText.length - end.length,
           ),
           containsNewLines: originalText.search("\n") !== -1,
+          preNewLines: start.preNewLines,
           index: start.index,
           length: end.index + end.length - start.index,
           nodes: root.nodes,
