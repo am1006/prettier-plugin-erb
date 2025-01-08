@@ -198,6 +198,7 @@ const printExpression = (node) => {
 
     return builders.group(
       [
+        node.preNewLines > 1 ? hardline : "",
         concat([
           [openingErb, " "],
           ...lines.map((line, i) => [
@@ -214,6 +215,7 @@ const printExpression = (node) => {
 
   return builders.group(
     [
+      node.preNewLines > 1 ? hardline : "",
       builders.join(" ", [
         openingErb,
         builders.indent(node.content),
