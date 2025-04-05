@@ -34,11 +34,11 @@
     "prettier": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.25.9",
+    "@babel/cli": "^7.27.0",
     "@babel/core": "^7.26.0",
     "babel-plugin-transform-regex": "^4.3.3",
     "prettier": "^3.3.3",
-    "regex": "^4.4.0",
-    "vitest": "^2.1.4"
+    "regex": "^6.0.0",
+    "vitest": "^3.1.0"
   }
 }
