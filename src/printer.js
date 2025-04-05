@@ -357,29 +357,37 @@ const formatExpressionBlock = async (node, textToDoc, options) => {
 };
 
 const formatRubyCode = async (node, textToDoc, options) => {
-  if (
-    node.contentPreRubyParser ||
-    !["expression", "statement"].includes(node.type) ||
-    node.keyword === "end" ||
-    node.content.startsWith("yield")
-  ) {
-    return;
+  // if (
+  //   node.contentPreRubyParser ||
+  //   !["expression", "statement"].includes(node.type) ||
+  //   node.keyword === "end" ||
+  //   node.content.startsWith("yield")
+  // ) {
+  //   return;
+  // }
+
+  // let doc;
+  // if (node.startBlock || ["else", "elsif", "when"].includes(node.keyword)) {
+  //   // We don't care if its an expressin or an statement
+
+  //   if (node.type === "expression") {
+  //     doc = await formatExpressionBlock(node, textToDoc, options);
+  //   }
+  //   if (node.type === "statement") {
+  //     doc = await formatStatementBlock(node, textToDoc, options);
+  //   }
+  // } else {
+  //   doc = await textToDoc(node.content, { ...options, parser: "ruby" });
+  // }
+
+  // node.contentPreRubyParser = node.content;
+  // node.content = doc;
+
+  // Skip processing - preserve original content
+  if (!node.contentPreRubyParser) {
+    node.contentPreRubyParser = node.content;
   }
-
-  let doc;
-  if (node.startBlock || ["else", "elsif", "when"].includes(node.keyword)) {
-    // We don't care if its an expressin or an statement
-
-    if (node.type === "expression") {
-      doc = await formatExpressionBlock(node, textToDoc, options);
-    }
-    if (node.type === "statement") {
-      doc = await formatStatementBlock(node, textToDoc, options);
-    }
-  } else {
-    doc = await textToDoc(node.content, { ...options, parser: "ruby" });
-  }
-
-  node.contentPreRubyParser = node.content;
-  node.content = doc;
+  
+  // No Ruby formatting is applied
+  return;
 };
