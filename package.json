@@ -1,23 +1,22 @@
 {
-  "name": "@4az/prettier-plugin-html-erb",
-  "author": "Daniel Castillo",
+  "name": "@am1006/prettier-plugin-erb",
+  "author": "am1006",
   "private": false,
-  "version": "0.0.6",
-  "description": "Prettier plugin for formatting html erb templates.",
+  "version": "0.1.0",
+  "description": "Prettier plugin for formatting Rails ERB templates.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/forazens/prettier-plugin-html-erb"
+    "url": "git+https://github.com/am1006/prettier-plugin-erb"
   },
-  "homepage": "https://github.com/forazens/prettier-plugin-html-erb#readme",
+  "homepage": "https://github.com/am1006/prettier-plugin-erb#readme",
   "bugs": {
-    "url": "https://github.com/ForAzens/prettier-plugin-html-erb/issues"
+    "url": "https://github.com/am1006/prettier-plugin-erb/issues"
   },
   "keywords": [
     "prettier",
     "plugin",
     "template",
-    "html",
     "ruby",
     "erb",
     "rails"
@@ -32,13 +31,11 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@prettier/plugin-ruby": "^4.0.0",
     "prettier": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
     "@babel/core": "^7.26.0",
-    "@prettier/plugin-ruby": "^4.0.4",
     "babel-plugin-transform-regex": "^4.3.3",
     "prettier": "^3.3.3",
     "regex": "^4.4.0",
