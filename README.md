@@ -35,6 +35,10 @@ npx prettier ./src/myfile.html.rb
 ## Ruby
 TODO - [ruby-lsp](https://shopify.github.io/ruby-lsp/#formatting)
 
+Wait for update from upstream:
+1. https://github.com/Shopify/ruby-lsp/issues/536
+2. https://github.com/Shopify/ruby-lsp/issues/1055
+
 # Configuration
 TODO
 
