@@ -1,33 +1,26 @@
-# @4az/prettier-plugin-html-erb
-A prettier plugin for html erb template files that works with prettier v3.
+# An opinionated prettier erb plugin.
+
+A prettier plugin for Rails erb template files that works with prettier v3.
+
+It is opinionated, in the sense that it:
+- does not format ruby code by default. Later, I plan to add the support to format ruby code using [ruby-lsp](https://shopify.github.io/ruby-lsp/#formatting)
+- first-class support for tailwindcss prettier plugin
 
 # Install
-## Node
+
+Assuming you have `prettier` installed, with `.prettierrc` or other config files properly set up:
+
 ```bash
-npm install --save-dev prettier @4az/prettier-plugin-html-erb @prettier/plugin-ruby
+npm install --save-dev @am1006/prettier-plugin-erb
 ```
 ```bash
-yarn add -D prettier @4az/prettier-plugin-html-erb @prettier/plugin-ruby
+yarn add -D prettier @am1006/prettier-plugin-erb
 ```
 ```bash
-pnpm install --save-dev prettier @4az/prettier-plugin-html-erb @prettier/plugin-ruby
+pnpm install --save-dev @am1006/prettier-plugin-erb
 ```
 
-## Ruby
-If you want to install the dependencies globally:
-```bash
-gem install bundler prettier_print syntax_tree
-```
-
-Or if you are using bundler:
-```bash
-bundler add prettier_print syntax_tree --group="development"
-```
-
-If you're having problems, check the repository of [@prettier/plugin-ruby](https://github.com/prettier/plugin-ruby?tab=readme-ov-file#getting-started).
-
-# Use
-Add the plugins to your `.prettierrc`:
+Then add the plugins to your `.prettierrc`:
 ```json
 {
     "plugins": ["@prettier/plugin-ruby", "@4az/prettier-plugin-html-erb"]
@@ -39,28 +32,34 @@ If any file doesn't format, check the output running prettier in the terminal:
 npx prettier ./src/myfile.html.rb
 ```
 
+## Ruby
+TODO - [ruby-lsp](https://shopify.github.io/ruby-lsp/#formatting)
+
 # Configuration
-This plugin doesn't have any special config. You can configure the ruby formatting using the options of [@prettier/plugin-ruby](https://github.com/prettier/plugin-ruby?tab=readme-ov-file#configuration).
+TODO
 
 # Roadmap
-There are a number of features I want to support:
+Along with the upstream roadmaps:
 - [x] Support erb delimiters. Ex: `<%- delimiters -%>`.
 - [ ] Port library to TypeSript.
 - [ ] Add a way to ignore sections of code of being formatted.
 - [ ] Support more ways to format blocks.
 
+I plan to support
+- [ ] tailwindcss plugin interoperability
+- [ ] ruby-lsp formatting
+
 # Testing
 To run tests:
 ```
-git clone https://github.com/ForAzens/prettier-plugin-html-erb.git
 cd prettier-plugin-html-erb
 npm install
-gem install bundler prettier_print syntax_tree
 npm run test
 ```
 
-# Special thanks
-[@davidodenwald](https://github.com/davidodenwald) for his plugin [prettier-plugin-jinja-template](https://github.com/davidodenwald/prettier-plugin-jinja-template) which served as a base for this plugin.
+# Thanks
+- https://github.com/adamzapasnik/prettier-plugin-erb
+- https://github.com/Nilkee/prettier-plugin-html-erb
 
 # License
 [MIT](https://github.com/ForAzens/prettier-plugin-html-erb/blob/main/LICENSE)
