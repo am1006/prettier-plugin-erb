@@ -64,6 +64,7 @@ npm run test
 # Thanks
 - https://github.com/adamzapasnik/prettier-plugin-erb
 - https://github.com/Nilkee/prettier-plugin-html-erb
+- https://github.com/aliariff/vscode-erb-beautify
 
 # License
 [MIT](https://github.com/ForAzens/prettier-plugin-html-erb/blob/main/LICENSE)
