@@ -8,7 +8,14 @@ It is opinionated, in the sense that it:
 
 # Install
 
-Assuming you have `prettier` installed, with `.prettierrc` or other config files properly set up:
+## Prerequisites
+- Assuming you have `prettier` installed, with `.prettierrc` or other config files properly set up.
+- Install tailwindcss prettier plugin, if you want to format tailwindcss code.
+    ```bash
+    npm install --save-dev prettier-plugin-tailwindcss
+    ```
+
+## Installation
 
 ```bash
 npm install --save-dev @am1006/prettier-plugin-erb
@@ -23,7 +30,7 @@ pnpm install --save-dev @am1006/prettier-plugin-erb
 Then add the plugins to your `.prettierrc`:
 ```json
 {
-    "plugins": ["@prettier/plugin-ruby", "@4az/prettier-plugin-html-erb"]
+    "plugins": ["prettier-plugin-tailwindcss", "@am1006/prettier-plugin-erb"]
 }
 ```
 
@@ -44,14 +51,14 @@ TODO
 
 # Roadmap
 Along with the upstream roadmaps:
-- [x] Support erb delimiters. Ex: `<%- delimiters -%>`.
+- [x] Support erb delimiters. Ex: `<%- delimiters -%>`. (To suppress leading and trailing whitespaces, you can use `<%-` `-%>` interchangeably with `<%` `%>`.)
 - [ ] Port library to TypeSript.
 - [ ] Add a way to ignore sections of code of being formatted.
 - [ ] Support more ways to format blocks.
 
 I plan to support
-- [ ] tailwindcss plugin interoperability
-- [ ] ruby-lsp formatting
+- [x] tailwindcss plugin interoperability
+- [ ] ruby-lsp formatting - using Rubocop
 
 # Testing
 To run tests:
